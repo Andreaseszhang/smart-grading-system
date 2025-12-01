@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabase';
-import type { Question, Submission } from '@/types';
+import type { Question, Submission, QuestionBank } from '@/types';
 
 // 题目服务 - 使用 Supabase
 export const questionService = {
@@ -305,5 +305,152 @@ export const submissionService = {
       .eq('id', id);
 
     if (error) throw error;
+  },
+};
+
+// 题库服务 - 使用 Supabase
+export const questionBankService = {
+  async create(bank: Omit<QuestionBank, 'id' | 'createdAt' | 'updatedAt'>): Promise<QuestionBank> {
+    const { data, error } = await supabase
+      .from('question_banks')
+      .insert({
+        name: bank.name,
+        description: bank.description,
+        question_ids: bank.questionIds || [],
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    return {
+      id: data.id,
+      name: data.name,
+      description: data.description,
+      questionIds: data.question_ids || [],
+      createdAt: data.created_at,
+      updatedAt: data.updated_at,
+    };
+  },
+
+  async getAll(): Promise<QuestionBank[]> {
+    const { data, error } = await supabase
+      .from('question_banks')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    return (data || []).map((b) => ({
+      id: b.id,
+      name: b.name,
+      description: b.description,
+      questionIds: b.question_ids || [],
+      createdAt: b.created_at,
+      updatedAt: b.updated_at,
+    }));
+  },
+
+  async getById(id: string): Promise<QuestionBank | null> {
+    const { data, error } = await supabase
+      .from('question_banks')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error) {
+      if (error.code === 'PGRST116') return null;
+      throw error;
+    }
+
+    return {
+      id: data.id,
+      name: data.name,
+      description: data.description,
+      questionIds: data.question_ids || [],
+      createdAt: data.created_at,
+      updatedAt: data.updated_at,
+    };
+  },
+
+  async update(id: string, updates: Partial<Omit<QuestionBank, 'id' | 'createdAt' | 'updatedAt'>>): Promise<QuestionBank> {
+    const updateData: any = {
+      updated_at: new Date().toISOString(),
+    };
+
+    if (updates.name !== undefined) updateData.name = updates.name;
+    if (updates.description !== undefined) updateData.description = updates.description;
+    if (updates.questionIds !== undefined) updateData.question_ids = updates.questionIds;
+
+    const { data, error } = await supabase
+      .from('question_banks')
+      .update(updateData)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    return {
+      id: data.id,
+      name: data.name,
+      description: data.description,
+      questionIds: data.question_ids || [],
+      createdAt: data.created_at,
+      updatedAt: data.updated_at,
+    };
+  },
+
+  async delete(id: string) {
+    const { error } = await supabase
+      .from('question_banks')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+  },
+
+  // 添加题目到题库
+  async addQuestion(bankId: string, questionId: string) {
+    const bank = await this.getById(bankId);
+    if (!bank) throw new Error('题库不存在');
+
+    const newQuestionIds = [...bank.questionIds, questionId];
+    return this.update(bankId, { questionIds: newQuestionIds });
+  },
+
+  // 从题库移除题目
+  async removeQuestion(bankId: string, questionId: string) {
+    const bank = await this.getById(bankId);
+    if (!bank) throw new Error('题库不存在');
+
+    const newQuestionIds = bank.questionIds.filter(id => id !== questionId);
+    return this.update(bankId, { questionIds: newQuestionIds });
+  },
+
+  // 获取题库中的所有题目
+  async getQuestions(bankId: string): Promise<Question[]> {
+    const bank = await this.getById(bankId);
+    if (!bank) return [];
+
+    if (bank.questionIds.length === 0) return [];
+
+    const { data, error } = await supabase
+      .from('questions')
+      .select('*')
+      .in('id', bank.questionIds);
+
+    if (error) throw error;
+
+    return (data || []).map((q) => ({
+      id: q.id,
+      title: q.title,
+      questionText: q.question_text,
+      referenceAnswer: q.reference_answer,
+      scoringCriteria: q.scoring_criteria,
+      totalScore: q.total_score,
+      bankId: bankId,
+      createdAt: q.created_at,
+    }));
   },
 };

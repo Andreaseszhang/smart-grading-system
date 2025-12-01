@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           error: '请求参数验证失败',
-          details: validation.error.errors,
+          details: validation.error.issues,
         },
         { status: 400 }
       );
@@ -45,7 +45,8 @@ export async function POST(request: NextRequest) {
       case 'openai':
         provider = new OpenAIProvider(
           aiConfig.apiKey,
-          aiConfig.model || 'gpt-4o-mini'
+          aiConfig.model || 'gpt-4o-mini',
+          aiConfig.baseURL // 传递 baseURL
         );
         break;
 

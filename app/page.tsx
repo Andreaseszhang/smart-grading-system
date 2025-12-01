@@ -201,12 +201,18 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-              <div className="flex gap-3 w-full">
+              <div className="flex gap-3 w-full flex-wrap">
                 <button
                   className="btn btn-secondary flex-1"
                   onClick={() => router.push('/teacher/create')}
                 >
                   进入教师端
+                </button>
+                <button
+                  className="btn btn-outline flex-1"
+                  onClick={() => router.push('/teacher/banks')}
+                >
+                  题库管理
                 </button>
                 <button
                   className="btn btn-outline flex-1"

@@ -7,10 +7,12 @@ export class OpenAIProvider {
 
   constructor(
     private apiKey: string,
-    private model: string = 'gpt-4o-mini'
+    private model: string = 'gpt-4o-mini',
+    private baseURL?: string
   ) {
     this.client = new OpenAI({
       apiKey: this.apiKey,
+      baseURL: this.baseURL, // 支持自定义 baseURL
       dangerouslyAllowBrowser: false, // 仅在服务端使用
     });
   }
@@ -55,7 +57,6 @@ export class OpenAIProvider {
         targetScore: Math.min(5, score + 1),
         templateAnswer: '暂无升级答案模板',
         keyPoints: [],
-        memorizeTime: '建议10分钟背诵',
       },
       feedback: raw.feedback || {
         strengths: ['暂无评价'],

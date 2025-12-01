@@ -6,7 +6,18 @@ export interface Question {
   referenceAnswer: string;
   scoringCriteria?: string;
   totalScore: number; // 固定为5分
+  bankId?: string; // 所属题库ID（可选）
   createdAt: string;
+}
+
+// 题库类型
+export interface QuestionBank {
+  id: string;
+  name: string;
+  description?: string;
+  questionIds: string[]; // 题目ID列表
+  createdAt: string;
+  updatedAt: string;
 }
 
 // 答题记录类型
@@ -25,7 +36,6 @@ export interface Submission {
     targetScore: number;
     templateAnswer: string;
     keyPoints: string[];
-    memorizeTime: string;
   };
 
   // 详细反馈
@@ -81,7 +91,6 @@ export interface GradingResult {
     targetScore: number;
     templateAnswer: string;
     keyPoints: string[];
-    memorizeTime: string;
   };
   feedback: {
     strengths: string[];

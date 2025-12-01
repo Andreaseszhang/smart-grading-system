@@ -62,7 +62,6 @@ export class ClaudeProvider {
         targetScore: Math.min(5, score + 1),
         templateAnswer: '暂无升级答案模板',
         keyPoints: [],
-        memorizeTime: '建议10分钟背诵',
       },
       feedback: raw.feedback || {
         strengths: ['暂无评价'],
