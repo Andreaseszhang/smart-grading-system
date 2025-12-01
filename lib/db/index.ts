@@ -3,11 +3,8 @@
 import Dexie, { Table } from 'dexie';
 import type { Question, Submission, AIConfig } from '@/types';
 
-// 导出 Supabase 版本的题目和答题服务
-export { questionService, submissionService } from './supabase-service';
-
-// 导出 localStorage 版本的题库服务
-export { localBankService as questionBankService } from './local-bank-service';
+// 导出 localStorage 版本的所有服务
+export { questionService, submissionService, questionBankService } from './local-storage-service';
 
 // Dexie 数据库类（仅用于 AI 配置）
 export class GradingDatabase extends Dexie {
