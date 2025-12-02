@@ -20,6 +20,7 @@ export default function StudentBankPage() {
   const [submitting, setSubmitting] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [error, setError] = useState('');
+  const [expandedQuestions, setExpandedQuestions] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     loadBankData();
@@ -221,6 +222,7 @@ export default function StudentBankPage() {
             {questions.map((question, index) => {
               const result = results[index];
               if (!result) return null;
+              const isExpanded = expandedQuestions.has(index);
 
               return (
                 <div key={question.id} className="card bg-base-100 shadow-xl">
@@ -236,16 +238,71 @@ export default function StudentBankPage() {
                       </div>
                     </div>
 
-                    {/* 题目内容 */}
-                    <div className="bg-base-200 p-4 rounded-lg mb-3">
-                      <div className="text-sm font-medium text-base-content/70 mb-2">题目：</div>
-                      <p className="whitespace-pre-wrap">{question.questionText}</p>
+                    {/* 题目内容 - 可折叠 */}
+                    <div className="mb-3">
+                      <button
+                        className="flex items-center gap-2 text-sm font-medium text-base-content/70 hover:text-base-content transition-colors w-full text-left"
+                        onClick={() => {
+                          const newExpanded = new Set(expandedQuestions);
+                          if (isExpanded) {
+                            newExpanded.delete(index);
+                          } else {
+                            newExpanded.add(index);
+                          }
+                          setExpandedQuestions(newExpanded);
+                        }}
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth={2}
+                          stroke="currentColor"
+                          className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-90' : ''}`}
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                        </svg>
+                        <span>题目内容</span>
+                      </button>
+                      {isExpanded && (
+                        <div className="bg-base-200 p-4 rounded-lg mt-2">
+                          <p className="whitespace-pre-wrap">{question.questionText}</p>
+                        </div>
+                      )}
                     </div>
 
-                    {/* 参考答案 */}
-                    <div className="bg-info/10 p-4 rounded-lg mb-3 border border-info/20">
-                      <div className="text-sm font-medium text-info mb-2">参考答案：</div>
-                      <p className="whitespace-pre-wrap text-sm">{question.referenceAnswer}</p>
+                    {/* 参考答案 - 可折叠 */}
+                    <div className="mb-3">
+                      <button
+                        className="flex items-center gap-2 text-sm font-medium text-info hover:text-info/80 transition-colors w-full text-left"
+                        onClick={() => {
+                          const newExpanded = new Set(expandedQuestions);
+                          const refKey = index + 1000; // 使用不同的key避免冲突
+                          if (expandedQuestions.has(refKey)) {
+                            newExpanded.delete(refKey);
+                          } else {
+                            newExpanded.add(refKey);
+                          }
+                          setExpandedQuestions(newExpanded);
+                        }}
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth={2}
+                          stroke="currentColor"
+                          className={`w-4 h-4 transition-transform ${expandedQuestions.has(index + 1000) ? 'rotate-90' : ''}`}
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                        </svg>
+                        <span>参考答案</span>
+                      </button>
+                      {expandedQuestions.has(index + 1000) && (
+                        <div className="bg-info/10 p-4 rounded-lg mt-2 border border-info/20">
+                          <p className="whitespace-pre-wrap text-sm">{question.referenceAnswer}</p>
+                        </div>
+                      )}
                     </div>
 
                     {/* 你的答案 */}
