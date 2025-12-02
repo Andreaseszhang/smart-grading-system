@@ -64,7 +64,7 @@ export const submissionService = {
       ...submission,
       submittedAt: now,
       reviewCount: 0,
-      lastReviewAt: null,
+      lastReviewAt: undefined,
     };
 
     const submissions = await this.getAll();
@@ -93,7 +93,17 @@ export const submissionService = {
 
   async getWrongAnswers(): Promise<Submission[]> {
     const submissions = await this.getAll();
-    return submissions.filter(s => s.result.score <= 3);
+    return submissions.filter(s => s.isWrong);
+  },
+
+  async getWrong(): Promise<Submission[]> {
+    const submissions = await this.getAll();
+    return submissions.filter(s => s.isWrong);
+  },
+
+  async getNeedReview(): Promise<Submission[]> {
+    const submissions = await this.getAll();
+    return submissions.filter(s => s.isWrong && s.reviewCount === 0);
   },
 
   async update(id: string, updates: Partial<Omit<Submission, 'id' | 'submittedAt'>>): Promise<Submission> {
@@ -122,6 +132,10 @@ export const submissionService = {
       reviewCount: submission.reviewCount + 1,
       lastReviewAt: new Date().toISOString(),
     });
+  },
+
+  async markReviewed(id: string): Promise<void> {
+    await this.incrementReviewCount(id);
   },
 };
 

@@ -101,7 +101,7 @@ export default function AnswerPage() {
         feedback: result.feedback,
         encouragement: result.encouragement,
         isWrong: result.score <= 3, // 3分及以下标记为错题
-        reviewCount: 0,
+        gradedAt: new Date().toISOString(),
       });
 
       // 跳转到结果页面
