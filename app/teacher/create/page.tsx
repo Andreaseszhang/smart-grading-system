@@ -1,8 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { questionService, configService } from '@/lib/db';
-import type { AIConfig } from '@/types';
+import { useState } from 'react';
+import { questionService } from '@/lib/db';
 
 export default function TeacherCreatePage() {
   const [title, setTitle] = useState('');
@@ -11,21 +10,8 @@ export default function TeacherCreatePage() {
   const [scoringCriteria, setScoringCriteria] = useState('');
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
-
-  // AI 配置相关
-  const [showAIConfig, setShowAIConfig] = useState(false);
-  const [aiConfig, setAiConfig] = useState<AIConfig | null>(null);
-  const [provider, setProvider] = useState<'openai' | 'claude' | 'zhipu'>('openai');
-  const [apiKey, setApiKey] = useState('');
-  const [model, setModel] = useState('');
-  const [baseURL, setBaseURL] = useState('');
-  const [configSaving, setConfigSaving] = useState(false);
   const [messageFading, setMessageFading] = useState(false);
   const [createdQuestionId, setCreatedQuestionId] = useState<string | null>(null);
-
-  useEffect(() => {
-    loadAIConfig();
-  }, []);
 
   // 生成测试题目
   function handleGenerateTestQuestion() {
@@ -101,21 +87,6 @@ export default function TeacherCreatePage() {
     }, 2000);
   }
 
-  async function loadAIConfig() {
-    try {
-      const configs = await configService.getAll();
-      if (configs.length > 0) {
-        setAiConfig(configs[0]);
-        setProvider(configs[0].provider);
-        setApiKey(configs[0].apiKey);
-        setModel(configs[0].model || '');
-        setBaseURL(configs[0].baseURL || '');
-      }
-    } catch (err) {
-      console.error('加载 AI 配置失败:', err);
-    }
-  }
-
   async function handleSaveQuestion() {
     if (!title.trim() || !questionText.trim() || !referenceAnswer.trim()) {
       setMessage({ type: 'error', text: '请填写必填字段' });
@@ -179,67 +150,6 @@ export default function TeacherCreatePage() {
     });
   }
 
-  async function handleSaveAIConfig() {
-    if (!apiKey.trim()) {
-      setMessage({ type: 'error', text: 'API Key 不能为空' });
-      return;
-    }
-
-    setConfigSaving(true);
-    setMessage(null);
-
-    try {
-      // 验证 API 配置
-      const response = await fetch('/api/config', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          provider,
-          apiKey,
-          model: model || undefined,
-          baseURL: baseURL || undefined,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || '配置验证失败');
-      }
-
-      const { config: validatedConfig } = await response.json();
-
-      // 保存到 IndexedDB
-      const newConfig: AIConfig = {
-        id: aiConfig?.id || crypto.randomUUID(),
-        provider,
-        apiKey,
-        model: validatedConfig.model,
-        baseURL: validatedConfig.baseURL,
-        updatedAt: new Date().toISOString(),
-      };
-
-      if (aiConfig) {
-        await configService.update(newConfig.id, newConfig);
-      } else {
-        await configService.add(newConfig);
-      }
-
-      setAiConfig(newConfig);
-      setMessage({ type: 'success', text: 'AI 配置保存成功！' });
-      setShowAIConfig(false);
-    } catch (err) {
-      console.error('保存 AI 配置失败:', err);
-      setMessage({
-        type: 'error',
-        text: err instanceof Error ? err.message : '保存配置失败，请重试',
-      });
-    } finally {
-      setConfigSaving(false);
-    }
-  }
-
   return (
     <div className="min-h-screen bg-base-200 p-8">
       <div className="max-w-6xl mx-auto">
@@ -293,146 +203,6 @@ export default function TeacherCreatePage() {
           <p className="text-base-content/70">创建题目和配置 AI 批改服务</p>
         </div>
 
-        {/* AI 配置状态 */}
-        <div className="card bg-base-100 shadow-xl mb-6">
-          <div className="card-body">
-            <div className="flex justify-between items-center">
-              <div>
-                <h2 className="card-title">AI 批改服务</h2>
-                {aiConfig ? (
-                  <div className="mt-2">
-                    <div className="badge badge-success gap-2">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        className="inline-block w-4 h-4 stroke-current"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                        ></path>
-                      </svg>
-                      已配置
-                    </div>
-                    <p className="text-sm text-base-content/70 mt-2">
-                      当前使用：{aiConfig.provider} - {aiConfig.model}
-                    </p>
-                  </div>
-                ) : (
-                  <div className="badge badge-warning mt-2">未配置</div>
-                )}
-              </div>
-              <button
-                className="btn btn-primary"
-                onClick={() => setShowAIConfig(!showAIConfig)}
-              >
-                {showAIConfig ? '收起配置' : aiConfig ? '修改配置' : '配置 AI'}
-              </button>
-            </div>
-
-            {/* AI 配置表单 */}
-            {showAIConfig && (
-              <div className="mt-6 pt-6 border-t border-base-300">
-                <div className="space-y-4">
-                  {/* Provider 选择 */}
-                  <div className="form-control">
-                    <label className="label">
-                      <span className="label-text font-semibold">AI 服务商</span>
-                    </label>
-                    <select
-                      className="select select-bordered"
-                      value={provider}
-                      onChange={(e) => setProvider(e.target.value as any)}
-                    >
-                      <option value="openai">OpenAI</option>
-                      <option value="claude">Claude (Anthropic)</option>
-                      <option value="zhipu">智谱 AI</option>
-                    </select>
-                  </div>
-
-                  {/* API Key */}
-                  <div className="form-control">
-                    <label className="label">
-                      <span className="label-text font-semibold">API Key *</span>
-                    </label>
-                    <input
-                      type="password"
-                      placeholder="请输入 API Key"
-                      className="input input-bordered"
-                      value={apiKey}
-                      onChange={(e) => setApiKey(e.target.value)}
-                    />
-                    <label className="label">
-                      <span className="label-text-alt">
-                        {provider === 'openai' && '以 sk- 开头'}
-                        {provider === 'claude' && '以 sk-ant- 开头'}
-                        {provider === 'zhipu' && '智谱 AI 的 API Key'}
-                      </span>
-                    </label>
-                  </div>
-
-                  {/* Model */}
-                  <div className="form-control">
-                    <label className="label">
-                      <span className="label-text font-semibold">模型（可选）</span>
-                    </label>
-                    <input
-                      type="text"
-                      placeholder={
-                        provider === 'openai'
-                          ? 'gpt-4o-mini'
-                          : provider === 'claude'
-                            ? 'claude-3-5-sonnet-20241022'
-                            : 'glm-4-flash'
-                      }
-                      className="input input-bordered"
-                      value={model}
-                      onChange={(e) => setModel(e.target.value)}
-                    />
-                    <label className="label">
-                      <span className="label-text-alt">留空使用默认模型</span>
-                    </label>
-                  </div>
-
-                  {/* Base URL */}
-                  <div className="form-control">
-                    <label className="label">
-                      <span className="label-text font-semibold">API 地址（可选）</span>
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="留空使用官方地址"
-                      className="input input-bordered"
-                      value={baseURL}
-                      onChange={(e) => setBaseURL(e.target.value)}
-                    />
-                    <label className="label">
-                      <span className="label-text-alt">使用代理或自建服务时填写</span>
-                    </label>
-                  </div>
-
-                  <button
-                    className="btn btn-primary w-full"
-                    onClick={handleSaveAIConfig}
-                    disabled={configSaving}
-                  >
-                    {configSaving ? (
-                      <>
-                        <span className="loading loading-spinner"></span>
-                        验证并保存中...
-                      </>
-                    ) : (
-                      '保存 AI 配置'
-                    )}
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
 
         {/* 创建题目表单 */}
         <div className="card bg-base-100 shadow-xl p-8">

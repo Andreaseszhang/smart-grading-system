@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { OpenAIProvider } from '@/lib/ai/providers/openai';
-import { ClaudeProvider } from '@/lib/ai/providers/claude';
-import { ZhipuProvider } from '@/lib/ai/providers/zhipu';
+import { getAIConfig } from '@/lib/ai/config';
 import type { GradingRequest } from '@/types';
 import { z } from 'zod';
 
@@ -12,12 +11,7 @@ const GradeRequestSchema = z.object({
   studentAnswer: z.string().min(1, '学生答案不能为空'),
   scoringCriteria: z.string().optional(),
   currentScore: z.number().min(1).max(5).optional(),
-  aiConfig: z.object({
-    provider: z.enum(['openai', 'claude', 'zhipu']),
-    apiKey: z.string().min(1, 'API Key 不能为空'),
-    model: z.string().optional(),
-    baseURL: z.string().optional(),
-  }),
+  model: z.string().optional(),
 });
 
 export async function POST(request: NextRequest) {
@@ -37,39 +31,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { aiConfig, ...gradingRequest } = validation.data;
+    const gradingRequest = validation.data;
 
-    // 根据 provider 选择对应的 AI 服务
-    let provider;
-    switch (aiConfig.provider) {
-      case 'openai':
-        provider = new OpenAIProvider(
-          aiConfig.apiKey,
-          aiConfig.model || 'gpt-4o-mini',
-          aiConfig.baseURL // 传递 baseURL
-        );
-        break;
+    // 从环境变量获取 AI 配置
+    const aiConfig = getAIConfig(gradingRequest.model);
 
-      case 'claude':
-        provider = new ClaudeProvider(
-          aiConfig.apiKey,
-          aiConfig.model || 'claude-3-5-sonnet-20241022'
-        );
-        break;
-
-      case 'zhipu':
-        provider = new ZhipuProvider(
-          aiConfig.apiKey,
-          aiConfig.model || 'glm-4-flash'
-        );
-        break;
-
-      default:
-        return NextResponse.json(
-          { error: '不支持的 AI provider' },
-          { status: 400 }
-        );
-    }
+    // 使用 OpenAI provider（从环境变量配置）
+    const provider = new OpenAIProvider(
+      aiConfig.apiKey,
+      aiConfig.model!,
+      aiConfig.baseURL
+    );
 
     // 调用 AI 进行批改
     const result = await provider.grade(gradingRequest as GradingRequest);

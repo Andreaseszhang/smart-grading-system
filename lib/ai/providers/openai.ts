@@ -7,7 +7,7 @@ export class OpenAIProvider {
 
   constructor(
     private apiKey: string,
-    private model: string = 'gpt-4o-mini',
+    private model: string = 'claude-sonnet-latest',
     private baseURL?: string
   ) {
     this.client = new OpenAI({
@@ -35,7 +35,7 @@ export class OpenAIProvider {
           content: prompt,
         },
       ],
-      temperature: 0.3,
+      temperature: 0.5,
       response_format: { type: 'json_object' }, // 强制返回 JSON
     });
 

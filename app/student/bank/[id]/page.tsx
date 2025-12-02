@@ -121,7 +121,7 @@ export default function StudentBankPage() {
             referenceAnswer: question.referenceAnswer,
             studentAnswer,
             scoringCriteria: question.scoringCriteria,
-            aiConfig,
+            model: aiConfig?.model,
           }),
         });
 

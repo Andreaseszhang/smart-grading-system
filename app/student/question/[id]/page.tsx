@@ -78,7 +78,7 @@ export default function SingleQuestionPage() {
           referenceAnswer: question.referenceAnswer,
           studentAnswer,
           scoringCriteria: question.scoringCriteria,
-          aiConfig,
+          model: aiConfig?.model,
         }),
       });
 

@@ -64,13 +64,10 @@ export interface Submission {
   gradedAt: string;
 }
 
-// AI 配置类型
+// AI 配置类型（仅用于客户端存储模型选择）
 export interface AIConfig {
   id: string;
-  provider: 'openai' | 'claude' | 'zhipu';
-  apiKey: string;
   model?: string;
-  baseURL?: string;
   updatedAt: string;
 }
 

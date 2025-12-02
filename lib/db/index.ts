@@ -1,7 +1,7 @@
 'use client';
 
 import Dexie, { Table } from 'dexie';
-import type { Question, Submission, AIConfig } from '@/types';
+import type { AIConfig } from '@/types';
 
 // 导出 localStorage 版本的所有服务
 export { questionService, submissionService, questionBankService } from './local-storage-service';
@@ -15,7 +15,7 @@ export class GradingDatabase extends Dexie {
 
     // 定义 Schema（只保留 configs）
     this.version(2).stores({
-      configs: 'id, provider',
+      configs: 'id',
     });
   }
 }
@@ -23,7 +23,7 @@ export class GradingDatabase extends Dexie {
 // 导出单例
 export const db = new GradingDatabase();
 
-// AI 配置服务
+// AI 配置服务（仅用于存储模型选择偏好）
 export const aiConfigService = {
   async add(config: AIConfig) {
     await db.configs.put(config);
@@ -32,7 +32,7 @@ export const aiConfigService = {
 
   async save(config: Omit<AIConfig, 'id' | 'updatedAt'>) {
     const newConfig: AIConfig = {
-      id: config.provider,
+      id: 'default',
       ...config,
       updatedAt: new Date().toISOString(),
     };
@@ -40,8 +40,8 @@ export const aiConfigService = {
     return newConfig;
   },
 
-  async get(provider: string) {
-    return await db.configs.get(provider);
+  async get(id: string = 'default') {
+    return await db.configs.get(id);
   },
 
   async getAll() {
@@ -52,8 +52,8 @@ export const aiConfigService = {
     await db.configs.update(id, updates);
   },
 
-  async delete(provider: string) {
-    await db.configs.delete(provider);
+  async delete(id: string) {
+    await db.configs.delete(id);
   },
 };
 
