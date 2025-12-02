@@ -74,6 +74,16 @@ export default function QuestionBanksPage() {
     }
   }
 
+  function copyBankURL(bankId: string) {
+    const url = `${window.location.origin}/student/bank/${bankId}`;
+    navigator.clipboard.writeText(url).then(() => {
+      setMessage({ type: 'success', text: '答题链接已复制到剪贴板' });
+      setTimeout(() => setMessage(null), 2000);
+    }).catch(() => {
+      setMessage({ type: 'error', text: '复制失败，请手动复制' });
+    });
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-base-200 flex items-center justify-center">
@@ -188,16 +198,39 @@ export default function QuestionBanksPage() {
                   <div className="text-xs text-base-content/50 mt-2">
                     创建于 {new Date(bank.createdAt).toLocaleDateString()}
                   </div>
-                  <div className="card-actions justify-end mt-4">
+                  <div className="card-actions justify-between mt-4">
                     <button
-                      className="btn btn-sm btn-ghost text-error"
-                      onClick={() => handleDeleteBank(bank.id, bank.name)}
+                      className="btn btn-sm btn-outline btn-info"
+                      onClick={() => copyBankURL(bank.id)}
+                      title="复制答题链接"
                     >
-                      删除
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="w-4 h-4"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244"
+                        />
+                      </svg>
+                      复制链接
                     </button>
-                    <button className="btn btn-sm btn-primary" onClick={() => router.push(`/teacher/banks/${bank.id}`)}>
-                      管理题目
-                    </button>
+                    <div className="flex gap-2">
+                      <button
+                        className="btn btn-sm btn-ghost text-error"
+                        onClick={() => handleDeleteBank(bank.id, bank.name)}
+                      >
+                        删除
+                      </button>
+                      <button className="btn btn-sm btn-primary" onClick={() => router.push(`/teacher/banks/${bank.id}`)}>
+                        管理题目
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
