@@ -79,6 +79,59 @@ export default function QuestionBankDetailPage() {
     }
   }
 
+  // 生成测试题目
+  function handleGenerateTestQuestion() {
+    setTitle('关于"新质生产力与高质量发展"的马克思主义政治经济学分析题');
+    setQuestionText(`材料：
+2023年以来，"新质生产力"成为我国经济发展的重要关键词。它以科技创新为核心要素，强调数字经济、人工智能、绿色低碳技术对传统生产方式的深刻改造。当前，我国正处在经济转型升级的关键阶段，一方面要推动产业结构优化升级，另一方面也面临科技"卡脖子"、发展不平衡不充分等现实问题。
+
+结合材料，运用马克思主义政治经济学的基本原理，分析：
+
+什么是"新质生产力"的本质内涵？
+
+发展新质生产力对推动我国高质量发展的重要意义。
+
+当前我国在培育新质生产力过程中面临的主要矛盾及其解决思路。`);
+    setReferenceAnswer(`新质生产力的本质内涵：
+新质生产力是以科技创新为主导、以高技术含量和高附加值为特征的先进生产力形态，体现了生产力中劳动者、劳动资料和劳动对象的整体跃升，符合马克思主义关于"生产力决定生产关系、经济基础决定上层建筑"的基本原理。
+
+发展新质生产力对高质量发展的意义：
+（1）有利于推动经济增长由要素驱动向创新驱动转变；
+（2）有利于提升全要素生产率，增强产业核心竞争力；
+（3）有利于推进绿色低碳发展，实现人与自然和谐共生；
+（4）有利于夯实现代化经济体系的物质基础。
+
+当前的主要矛盾及解决思路：
+主要矛盾表现为：关键核心技术受制于人、创新体系协同性不足、区域与产业发展不平衡等。
+解决思路包括：
+（1）强化企业科技创新主体地位；
+（2）加大基础研究与关键核心技术攻关；
+（3）完善科技成果转化机制；
+（4）优化创新资源配置，推动区域协同发展。`);
+    setScoringCriteria(`对"新质生产力"内涵理解准确，理论表述规范（3分）
+
+能从多角度分析其对高质量发展的意义，观点完整（4分）
+
+能结合现实问题提出合理对策，逻辑清晰（3分）
+
+若出现以下情况酌情扣分：
+
+理论表述错误或混淆概念
+
+仅泛泛而谈，未结合材料
+
+对策空洞、缺乏针对性`);
+    setMessage({ type: 'success', text: '测试题目已生成' });
+  }
+
+  // 清空表单
+  function handleClearForm() {
+    setTitle('');
+    setQuestionText('');
+    setReferenceAnswer('');
+    setScoringCriteria('');
+  }
+
   async function handleCreateQuestion() {
     if (!title.trim() || !questionText.trim() || !referenceAnswer.trim()) {
       setMessage({ type: 'error', text: '请填写必填字段' });
@@ -339,7 +392,25 @@ export default function QuestionBankDetailPage() {
         {showCreateModal && (
           <div className="modal modal-open">
             <div className="modal-box max-w-6xl max-h-[90vh]">
-              <h3 className="font-bold text-lg mb-6">创建新题目</h3>
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="font-bold text-lg">创建新题目</h3>
+                <div className="flex gap-2">
+                  <button
+                    className="btn btn-sm btn-outline btn-secondary"
+                    onClick={handleGenerateTestQuestion}
+                    disabled={creating}
+                  >
+                    生成测试题目
+                  </button>
+                  <button
+                    className="btn btn-sm btn-outline"
+                    onClick={handleClearForm}
+                    disabled={creating}
+                  >
+                    清空
+                  </button>
+                </div>
+              </div>
               <div className="space-y-6">
                 {/* 题目标题 */}
                 <div className="grid grid-cols-[120px_1fr] gap-4 items-start">
