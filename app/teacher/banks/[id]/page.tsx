@@ -338,56 +338,55 @@ export default function QuestionBankDetailPage() {
         {/* 创建题目模态框 */}
         {showCreateModal && (
           <div className="modal modal-open">
-            <div className="modal-box max-w-4xl">
-              <h3 className="font-bold text-lg mb-4">创建新题目</h3>
-              <div className="space-y-4">
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text">题目标题 *</span>
-                  </label>
+            <div className="modal-box max-w-6xl max-h-[90vh]">
+              <h3 className="font-bold text-lg mb-6">创建新题目</h3>
+              <div className="space-y-6">
+                {/* 题目标题 */}
+                <div className="grid grid-cols-[120px_1fr] gap-4 items-start">
+                  <label className="pt-3 text-sm font-medium">题目标题 *</label>
                   <input
                     type="text"
                     placeholder="例如：请解释什么是机器学习"
-                    className="input input-bordered"
+                    className="input input-bordered w-full"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                   />
                 </div>
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text">题目内容 *</span>
-                  </label>
+
+                {/* 题目内容 */}
+                <div className="grid grid-cols-[120px_1fr] gap-4 items-start">
+                  <label className="pt-3 text-sm font-medium">题目内容 *</label>
                   <textarea
-                    className="textarea textarea-bordered h-40"
+                    className="textarea textarea-bordered w-full h-48 resize-none"
                     placeholder="请输入完整的题目内容..."
                     value={questionText}
                     onChange={(e) => setQuestionText(e.target.value)}
                   />
                 </div>
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text">参考答案 *</span>
-                  </label>
+
+                {/* 参考答案 */}
+                <div className="grid grid-cols-[120px_1fr] gap-4 items-start">
+                  <label className="pt-3 text-sm font-medium">参考答案 *</label>
                   <textarea
-                    className="textarea textarea-bordered h-40"
+                    className="textarea textarea-bordered w-full h-48 resize-none"
                     placeholder="请输入参考答案..."
                     value={referenceAnswer}
                     onChange={(e) => setReferenceAnswer(e.target.value)}
                   />
                 </div>
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text">评分标准（可选）</span>
-                  </label>
+
+                {/* 评分标准 */}
+                <div className="grid grid-cols-[120px_1fr] gap-4 items-start">
+                  <label className="pt-3 text-sm font-medium">评分标准（可选）</label>
                   <textarea
-                    className="textarea textarea-bordered h-32"
+                    className="textarea textarea-bordered w-full h-40 resize-none"
                     placeholder="请输入评分标准，帮助 AI 更准确地评分..."
                     value={scoringCriteria}
                     onChange={(e) => setScoringCriteria(e.target.value)}
                   />
                 </div>
               </div>
-              <div className="modal-action">
+              <div className="modal-action mt-6">
                 <button
                   className="btn btn-ghost"
                   onClick={() => {
