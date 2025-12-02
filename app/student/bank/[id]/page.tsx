@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { questionBankService, questionService, configService } from '@/lib/db';
-import type { QuestionBank, Question, AIConfig, GradingResult } from '@/types';
+import type { QuestionBank, Question, GradingResult, AIConfig } from '@/types';
 
 export default function StudentBankPage() {
   const router = useRouter();
@@ -88,11 +88,6 @@ export default function StudentBankPage() {
     if (unanswered !== -1) {
       setError(`第 ${unanswered + 1} 题还未作答`);
       setCurrentIndex(unanswered);
-      return;
-    }
-
-    if (!aiConfig) {
-      setError('请先在教师端配置 AI 批改服务');
       return;
     }
 

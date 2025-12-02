@@ -45,13 +45,6 @@ export interface Submission {
     suggestions: string[];
   };
 
-  // 🆕 激励话语
-  encouragement: {
-    message: string;
-    tip: string;
-    progress: string;
-  };
-
   // 🆕 错题标记
   isWrong: boolean; // score <= 3 自动标记
   reviewCount: number;
@@ -93,11 +86,6 @@ export interface GradingResult {
     strengths: string[];
     weaknesses: string[];
     suggestions: string[];
-  };
-  encouragement: {
-    message: string;
-    tip: string;
-    progress: string;
   };
 }
 

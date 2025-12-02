@@ -58,11 +58,6 @@ export default function SingleQuestionPage() {
       return;
     }
 
-    if (!aiConfig) {
-      setError('请先在教师端配置 AI 批改服务');
-      return;
-    }
-
     setIsSubmitting(true);
     setError('');
 
@@ -97,7 +92,6 @@ export default function SingleQuestionPage() {
         scoreLabel: result.scoreLabel,
         upgradeAnswer: result.upgradeAnswer,
         feedback: result.feedback,
-        encouragement: result.encouragement,
       };
 
       sessionStorage.setItem('standalone_result', JSON.stringify(resultData));

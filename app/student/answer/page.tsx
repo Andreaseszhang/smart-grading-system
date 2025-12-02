@@ -94,7 +94,6 @@ export default function AnswerPage() {
         scoreLabel: result.scoreLabel,
         upgradeAnswer: result.upgradeAnswer,
         feedback: result.feedback,
-        encouragement: result.encouragement,
         isWrong: result.score <= 3, // 3分及以下标记为错题
         gradedAt: new Date().toISOString(),
       });

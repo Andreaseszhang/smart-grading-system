@@ -93,16 +93,6 @@ export default function ResultPage() {
           </div>
         </div>
 
-        {/* 激励话语 */}
-        <div className="card bg-base-100 shadow-xl mb-6">
-          <div className="card-body">
-            <div className="space-y-2">
-              <p className="font-semibold text-lg">{submission.encouragement.message}</p>
-              <p className="text-base-content/70">{submission.encouragement.tip}</p>
-            </div>
-          </div>
-        </div>
-
         {/* 升级答案模板 */}
         {submission.score < 5 && (
           <div className="card bg-base-100 shadow-xl mb-6">

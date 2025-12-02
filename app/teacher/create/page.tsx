@@ -12,6 +12,60 @@ export default function TeacherCreatePage() {
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [messageFading, setMessageFading] = useState(false);
   const [createdQuestionId, setCreatedQuestionId] = useState<string | null>(null);
+  const [testingAPI, setTestingAPI] = useState(false);
+
+  // 测试 LLM API 连接
+  async function handleTestLLMAPI() {
+    setTestingAPI(true);
+    setMessage(null);
+
+    try {
+      const response = await fetch('/api/grade', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          questionText: '什么是人工智能？',
+          referenceAnswer: '人工智能（AI）是计算机科学的一个分支，旨在创建能够执行通常需要人类智能的任务的系统。',
+          studentAnswer: '人工智能是让机器像人一样思考和学习的技术。',
+          scoringCriteria: '回答准确性和完整性',
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setMessage({
+          type: 'success',
+          text: `LLM API 连接成功！模型响应正常，测试评分：${data.data.score}分`
+        });
+      } else {
+        setMessage({
+          type: 'error',
+          text: `LLM API 测试失败：${data.error || data.message || '未知错误'}`
+        });
+      }
+    } catch (error) {
+      console.error('LLM API 测试错误:', error);
+      setMessage({
+        type: 'error',
+        text: `无法连接到 LLM API，请检查网络和配置：${error instanceof Error ? error.message : '未知错误'}`
+      });
+    } finally {
+      setTestingAPI(false);
+      setMessageFading(false);
+      // 3秒后开始淡出
+      setTimeout(() => {
+        setMessageFading(true);
+      }, 3000);
+      // 3.5秒后完全移除消息
+      setTimeout(() => {
+        setMessage(null);
+        setMessageFading(false);
+      }, 3500);
+    }
+  }
 
   // 生成测试题目
   function handleGenerateTestQuestion() {
@@ -163,6 +217,25 @@ export default function TeacherCreatePage() {
               返回主页
             </a>
             <div className="flex gap-2">
+              <button
+                className="btn btn-outline btn-info btn-sm"
+                onClick={handleTestLLMAPI}
+                disabled={testingAPI}
+              >
+                {testingAPI ? (
+                  <>
+                    <span className="loading loading-spinner loading-xs"></span>
+                    测试中...
+                  </>
+                ) : (
+                  <>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9.348 14.651a3.75 3.75 0 010-5.303m5.304 0a3.75 3.75 0 010 5.303m-7.425 2.122a6.75 6.75 0 010-9.546m9.546 0a6.75 6.75 0 010 9.546M5.106 18.894c-3.808-3.808-3.808-9.98 0-13.789m13.788 0c3.808 3.808 3.808 9.981 0 13.79M12 12h.008v.007H12V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                    </svg>
+                    测试 LLM API
+                  </>
+                )}
+              </button>
               <a href="/teacher/banks" className="btn btn-ghost btn-sm">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

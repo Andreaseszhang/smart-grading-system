@@ -3,8 +3,12 @@
 import Dexie, { Table } from 'dexie';
 import type { AIConfig } from '@/types';
 
-// 导出 localStorage 版本的所有服务
-export { questionService, submissionService, questionBankService } from './local-storage-service';
+// 导出 API 客户端版本的所有服务 (替换 localStorage)
+export {
+  questionService,
+  submissionService,
+  questionBankService,
+} from './api-client-service';
 
 // Dexie 数据库类（仅用于 AI 配置）
 export class GradingDatabase extends Dexie {

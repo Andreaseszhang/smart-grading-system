@@ -18,10 +18,6 @@ interface StandaloneResult {
     weaknesses: string[];
     suggestions: string[];
   };
-  encouragement: {
-    message: string;
-    tip: string;
-  };
 }
 
 export default function StandaloneResultPage() {
@@ -71,16 +67,6 @@ export default function StandaloneResultPage() {
             </div>
             <div className="badge badge-lg mt-4 bg-white/20 text-white border-none">
               {result.scoreLabel}
-            </div>
-          </div>
-        </div>
-
-        {/* 激励话语 */}
-        <div className="card bg-base-100 shadow-xl mb-6">
-          <div className="card-body">
-            <div className="space-y-2">
-              <p className="font-semibold text-lg">{result.encouragement.message}</p>
-              <p className="text-base-content/70">{result.encouragement.tip}</p>
             </div>
           </div>
         </div>
