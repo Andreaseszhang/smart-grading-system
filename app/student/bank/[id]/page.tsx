@@ -236,8 +236,21 @@ export default function StudentBankPage() {
                       </div>
                     </div>
 
+                    {/* 题目内容 */}
                     <div className="bg-base-200 p-4 rounded-lg mb-3">
-                      <div className="text-sm text-base-content/70 mb-2">你的答案：</div>
+                      <div className="text-sm font-medium text-base-content/70 mb-2">题目：</div>
+                      <p className="whitespace-pre-wrap">{question.questionText}</p>
+                    </div>
+
+                    {/* 参考答案 */}
+                    <div className="bg-info/10 p-4 rounded-lg mb-3 border border-info/20">
+                      <div className="text-sm font-medium text-info mb-2">参考答案：</div>
+                      <p className="whitespace-pre-wrap text-sm">{question.referenceAnswer}</p>
+                    </div>
+
+                    {/* 你的答案 */}
+                    <div className="bg-base-200 p-4 rounded-lg mb-3">
+                      <div className="text-sm font-medium text-base-content/70 mb-2">你的答案：</div>
                       <p className="whitespace-pre-wrap">{answers[index]}</p>
                     </div>
 
