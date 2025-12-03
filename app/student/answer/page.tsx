@@ -54,11 +54,6 @@ export default function AnswerPage() {
       return;
     }
 
-    if (!aiConfig) {
-      setError('请先配置 AI 服务（在教师端配置）');
-      return;
-    }
-
     setIsSubmitting(true);
     setError('');
 
