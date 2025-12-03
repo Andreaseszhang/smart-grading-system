@@ -119,7 +119,7 @@ export default function ResultPage() {
                 <p className="text-base leading-relaxed whitespace-pre-wrap">{submission.questionText}</p>
               </div>
               <div className="bg-base-200 p-6 rounded-lg mb-4">
-                <h3 className="font-semibold mb-3 text-lg">参考答案模板：</h3>
+                <h3 className="font-semibold mb-3 text-lg">优化后答案：</h3>
                 <p className="text-base leading-relaxed whitespace-pre-wrap">
                   {submission.upgradeAnswer.templateAnswer}
                 </p>
