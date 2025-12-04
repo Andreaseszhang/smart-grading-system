@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter, useParams } from 'next/navigation';
+import { useState, useEffect } from "react";
+import { useRouter, useParams } from "next/navigation";
 
 interface StandaloneResult {
   questionText: string;
@@ -27,12 +27,12 @@ export default function StandaloneResultPage() {
   const [result, setResult] = useState<StandaloneResult | null>(null);
 
   useEffect(() => {
-    const data = sessionStorage.getItem('standalone_result');
+    const data = sessionStorage.getItem("standalone_result");
     if (data) {
       setResult(JSON.parse(data));
       // 延迟清除，确保数据已经被使用
       setTimeout(() => {
-        sessionStorage.removeItem('standalone_result');
+        sessionStorage.removeItem("standalone_result");
       }, 100);
     } else {
       // 如果没有数据，返回答题页
@@ -54,7 +54,9 @@ export default function StandaloneResultPage() {
         {/* 标题 */}
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold mb-2">批改结果</h1>
-          <p className="text-base-content/70">认真看看 AI 的反馈，这会帮助你提升！</p>
+          <p className="text-base-content/70">
+            认真看看 AI 的反馈，这会帮助你提升！
+          </p>
         </div>
 
         {/* 分数展示 */}
@@ -90,11 +92,13 @@ export default function StandaloneResultPage() {
                     d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"
                   />
                 </svg>
-                升级到 {result.upgradeAnswer.targetScore} 分的答案模板
+                如何更进一步
               </h2>
               <div className="bg-base-200 p-4 rounded-lg mb-4">
                 <h3 className="font-semibold mb-2">题目：</h3>
-                <p className="text-base leading-relaxed whitespace-pre-wrap">{result.questionText}</p>
+                <p className="text-base leading-relaxed whitespace-pre-wrap">
+                  {result.questionText}
+                </p>
               </div>
               <div className="bg-base-200 p-6 rounded-lg mb-4">
                 <h3 className="font-semibold mb-3 text-lg">优化后答案：</h3>
@@ -137,7 +141,7 @@ export default function StandaloneResultPage() {
 
             {/* 不足 */}
             {result.feedback.weaknesses.length > 0 &&
-              result.feedback.weaknesses[0] !== '暂无评价' && (
+              result.feedback.weaknesses[0] !== "暂无评价" && (
                 <div className="mb-4">
                   <h3 className="font-semibold mb-2 flex items-center gap-2">
                     <span className="badge badge-warning">待改进</span>
@@ -169,7 +173,9 @@ export default function StandaloneResultPage() {
           <div className="card-body">
             <h2 className="card-title">你的答案</h2>
             <div className="bg-base-200 p-4 rounded-lg">
-              <p className="text-base leading-relaxed whitespace-pre-wrap">{result.studentAnswer}</p>
+              <p className="text-base leading-relaxed whitespace-pre-wrap">
+                {result.studentAnswer}
+              </p>
             </div>
           </div>
         </div>
